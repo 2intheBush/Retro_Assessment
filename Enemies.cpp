@@ -7,9 +7,9 @@ Enemies::Enemies()	{
 	speed = 200.f;
 	width = 50;
 	height = 50;
+	leftExtreme = 0;
 	x = leftExtreme + height * .5f;
 	y = 800;
-	leftExtreme = 0;
 	rightExtreme = 600;
 	bottomExtreme = 0 + height * .5f;
 	topExtreme = 800;

@@ -1,5 +1,6 @@
 #include "Bullets.h"
 #include "AIE.h"
+#include "Enemies.h"
 
 Bullets::Bullets()
 {
@@ -22,6 +23,4 @@ void Bullets::SetSize(float a_width, float a_height){
 		width = a_width;
 		height = a_height;
 	}
-void Bullets::BulletRange(){
 
-}

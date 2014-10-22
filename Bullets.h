@@ -18,8 +18,7 @@ public:
 	int width;
 	void SetSize(float a_width, float a_height);
 
-	void BulletRange();
-
+	bool CollisionCheck();
 };
 
 #endif

@@ -9,13 +9,14 @@
 void CollisionCheck();
 void AddingBullet(float a_deltaTime);
 void MoveBullets(float a_deltaTime);
+void BulletCollideEnemy();
 void AddEnemies(float a_deltaTime);
 void MoveEnemies(float a_deltaTime);
 void PlayerAnimation();
 
 //GLobal Variables
-unsigned int screenHeight;
-unsigned int screenWidth;
+unsigned int screenHeight = 800;
+unsigned int screenWidth = 600;
 float reloadTime, currentReloadTime;
 float spawnTime, currentSpawnTime;
 
@@ -38,23 +39,23 @@ std::vector<Bullets> bullet;
 void PlayerAnimation(){
 	switch (playerAnim){
 	case ONE:
-		MoveSprite(Player::Player().playerPlane1, Player::Player().x, Player::Player().y);
-		DrawSprite(Player::Player().playerPlane1);
+		MoveSprite(player.playerPlane1, player.x, player.y);
+		DrawSprite(player.playerPlane1);
 		playerAnim = TWO;
 		break;
 	case TWO:
-		MoveSprite(Player::Player().playerPlane2, Player::Player().x, Player::Player().y);
-		DrawSprite(Player::Player().playerPlane2);
+		MoveSprite(player.playerPlane2, player.x, player.y);
+		DrawSprite(player.playerPlane2);
 		playerAnim = THREE;
 		break;
 	case THREE:
-		MoveSprite(Player::Player().playerPlane3, Player::Player().x, Player::Player().y);
-		DrawSprite(Player::Player().playerPlane3);
+		MoveSprite(player.playerPlane3, player.x, player.y);
+		DrawSprite(player.playerPlane3);
 		playerAnim = FOUR;
 		break;
 	case FOUR:
-		MoveSprite(Player::Player().playerPlane4, Player::Player().x, Player::Player().y);
-		DrawSprite(Player::Player().playerPlane4);
+		MoveSprite(player.playerPlane4, player.x, player.y);
+		DrawSprite(player.playerPlane4);
 		playerAnim = ONE;
 		break;
 	default:
@@ -68,9 +69,7 @@ int main( int argc, char* argv[] )
 	
     SetBackgroundColour(SColour(0, 100, 200, 50));
 	
-	//global Variables Initialziation
-	screenWidth = 600;
-	screenHeight = 800;
+	player.Init();
 	
 	//Timers
 	srand(time(NULL));
@@ -92,6 +91,7 @@ int main( int argc, char* argv[] )
 		//Bullet functions in loop
 		AddingBullet(DeltaT);
 		MoveBullets(DeltaT);
+		
 		
 		//player functions in game loop
 		player.MovementKeys(DeltaT);
@@ -154,7 +154,8 @@ void AddEnemies(float a_deltaTime){
 	if (currentSpawnTime <= 0.f){
 
 		enemyPlane.emplace_back();
-		enemyPlane.back().x += rand()%575;
+		enemyPlane.back().x += rand()%550;
+		std::cout << "New Enemy!!" << enemyPlane.size() << std::endl;
 		
 		currentSpawnTime = spawnTime;
 	}
@@ -165,6 +166,21 @@ void AddEnemies(float a_deltaTime){
 
 void MoveEnemies(float a_deltaTime){
 	for (int i = 0; i < enemyPlane.size(); i++){
-		enemyPlane[i].Movement(a_deltaTime);
+		enemyPlane[i].Enemies::Movement(a_deltaTime);
 	}
+}
+bool Bullets::CollisionCheck(){
+	for (int i = 0; i < enemyPlane.size(); i++){
+		for (int j = 0; j < bullet.size(); j++){
+			while (bullet[j].x >= (enemyPlane[i].x -= enemyPlane[i].width * .5f) &&
+				bullet[j].x <= (enemyPlane[i].x += enemyPlane[i].width * .5f) &&
+				bullet[j].y >= (enemyPlane[i].y -= enemyPlane[i].width * .5f)){
+					return true;
+			}
+		}
+	}
+}
+
+void BulletCollideEnemy(){
+	if (Bullets::CollisionCheck() == true)
 }

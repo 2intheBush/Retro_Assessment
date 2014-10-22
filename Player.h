@@ -11,6 +11,8 @@ public:
 	int playerPlane4;
 
 	Player();
+
+	void Init();
 	~Player();
 
 	float x;
