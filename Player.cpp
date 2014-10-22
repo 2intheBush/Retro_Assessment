@@ -22,10 +22,10 @@ void Player::Init()
 }
 
 Player::~Player(){
-	/*DestroySprite(Player::playerPlane1);
+	DestroySprite(Player::playerPlane1);
 	DestroySprite(Player::playerPlane2); 
 	DestroySprite(Player::playerPlane3);
-	DestroySprite(Player::playerPlane4);*/
+	DestroySprite(Player::playerPlane4);
 }
 
 

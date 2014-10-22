@@ -14,6 +14,7 @@ Enemies::Enemies()	{
 	bottomExtreme = 0 + height * .5f;
 	topExtreme = 800;
 	spriteID = CreateSprite("./images/yellowplane.png", width, height, true);
+	alive = false;
 }
 
 Enemies::~Enemies()	{
@@ -65,4 +66,5 @@ bool Enemies::Collide(){
 		y + height * .5f >= Player::Player().y - Player::Player().height * .5f){
 		return true;
 	}
+	return false;
 }

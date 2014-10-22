@@ -2,6 +2,7 @@
 #define _BULLETS_H_
 
 #include <AIE.h>
+#include <vector>
 
 class Bullets{
 public:
@@ -9,7 +10,7 @@ public:
 	~Bullets();
 
 	unsigned int spriteID;
-
+	bool alive;
 	float x;
 	float y;
 	void SetPosition(float a_x, float a_y);
@@ -19,6 +20,8 @@ public:
 	void SetSize(float a_width, float a_height);
 
 	bool CollisionCheck();
+
+	float Position(float a_x, float a_y);
 };
 
 #endif

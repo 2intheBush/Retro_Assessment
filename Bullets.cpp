@@ -7,6 +7,7 @@ Bullets::Bullets()
 	height = 10;
 	width = 5;
 	spriteID = CreateSprite("./images/bullets.png", width, height, true);
+	alive = false;
 }
 
 Bullets::~Bullets()
@@ -23,4 +24,3 @@ void Bullets::SetSize(float a_width, float a_height){
 		width = a_width;
 		height = a_height;
 	}
-

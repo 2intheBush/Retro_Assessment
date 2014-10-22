@@ -8,12 +8,12 @@ public:
 	Enemies();
 	~Enemies();
 
-	unsigned int spriteID;
 	float speed;
 	int dir;
 	float x;
 	float y;
-	
+	bool alive;
+	unsigned int spriteID;
 	void SetPosition(float a_x, float a_y);
 
 	int width;
