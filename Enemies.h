@@ -2,6 +2,7 @@
 #define _ENEMIES_H_
 
 # include "AIE.h"
+#include "main.h"
 
 class Enemies{
 public:
@@ -12,7 +13,6 @@ public:
 	int dir;
 	float x;
 	float y;
-	bool alive;
 	unsigned int spriteID;
 	void SetPosition(float a_x, float a_y);
 

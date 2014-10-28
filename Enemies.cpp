@@ -1,6 +1,7 @@
 #include "Enemies.h"
-#include "Player.h"
 #include "AIE.h"
+
+
 
 Enemies::Enemies()	{
 	dir = -1;
@@ -14,11 +15,10 @@ Enemies::Enemies()	{
 	bottomExtreme = 0 + height * .5f;
 	topExtreme = 800;
 	spriteID = CreateSprite("./images/yellowplane.png", width, height, true);
-	alive = false;
-}
+} 
 
 Enemies::~Enemies()	{
-	DestroySprite(spriteID);
+	//DestroySprite(spriteID);
 }
 
 void Enemies::SetPosition(float a_x, float a_y){
@@ -44,14 +44,14 @@ void Enemies::Movement(float a_deltaTime){
 	{
 		y = bottomExtreme;
 		dir *= -1;
-		//RotateSprite(spriteID, 180);
+		RotateSprite(spriteID, 180);
 	}
 
 	if (y >= topExtreme)
 	{
 		y = topExtreme;
 		dir *= -1;
-		//RotateSprite(spriteID, 180);
+		RotateSprite(spriteID, 180);
 	}
 	y += speed * dir * a_deltaTime;
 
@@ -60,10 +60,12 @@ void Enemies::Movement(float a_deltaTime){
 }
 
 bool Enemies::Collide(){
-	while (x - width * .5f <= Player::Player().x + Player::Player().width * .5f &&
-		x + width * .5f >= Player::Player().x - Player::Player().width * .5f &&
-		y - height * .5f <= Player::Player().y + Player::Player().height * .5f &&
-		y + height * .5f >= Player::Player().y - Player::Player().height * .5f){
+
+	
+	while (x - width * .5f <= player.x + player.width * .5f &&
+		x + width * .5f >= player.x - player.width * .5f &&
+		y - height * .5f <= player.y + player.height * .5f &&
+		y + height * .5f >= player.y - player.height * .5f){
 		return true;
 	}
 	return false;

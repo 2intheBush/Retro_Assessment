@@ -10,7 +10,6 @@ public:
 	~Bullets();
 
 	unsigned int spriteID;
-	bool alive;
 	float x;
 	float y;
 	void SetPosition(float a_x, float a_y);
