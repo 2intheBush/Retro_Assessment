@@ -27,6 +27,7 @@ unsigned int screenWidth = 600;
 float reloadTime, currentReloadTime;
 float spawnTime, currentSpawnTime;
 float myHighScore;
+bool endGame;
 
 
 enum PLAYERANIMATION{
@@ -37,11 +38,14 @@ enum PLAYERANIMATION{
 };
 
 enum GAMESTATES{
-	MAINMENU,
+	MAIN_START_GAME,
+	MAIN_HIGHSCORES,
+	MAIN_QUIT,
 	HOWTOPLAY,
 	HIGHSCORE,
 	QUIT,
-	GAMESTATE
+	GAMESTATE,
+	PRE_GAME_MENU
 };
 GAMESTATES gamestates;
 
@@ -92,42 +96,102 @@ int main( int argc, char* argv[] )
 	srand(time(NULL));
 	reloadTime = .15f;
 	currentReloadTime = reloadTime;
-	
 	spawnTime = .5f;
 	currentSpawnTime = spawnTime;
+	
+	//Menu Sprites
+	unsigned int mainStartGame = CreateSprite("./images/Menu_Start_Game.png", screenWidth, screenHeight, true);
+	unsigned int mainHighScores = CreateSprite("./images/Menu_High_Score.png", screenWidth, screenHeight, true);
+	unsigned int mainQuit = CreateSprite("./images/Menu_Quit.png", screenWidth, screenHeight, true);
+
 
 	//player Animation
 	playerAnim = ONE;
-	gamestates = MAINMENU;
+	gamestates = MAIN_START_GAME;
+	endGame = false;
 
-	switch (gamestates){
-		
-	}
     //Game Loop
     do
     {
 		ClearScreen();
-		float DeltaT = GetDeltaTime();
-		//Game UI
-		GameUI();
-
-		//Bullet functions in loop
-		AddingBullet(DeltaT);
-		MoveBullets(DeltaT);
-		BulletCollideEnemy();
+		float DeltaT = GetDeltaTime(); 
 		
+		switch (gamestates){
+		case MAIN_START_GAME:
+			MoveSprite(mainStartGame, screenWidth *.5f, screenHeight * .5f);
+			DrawSprite(mainStartGame);
+			
+			if (IsKeyDown(257)){
+				gamestates = PRE_GAME_MENU;
+			}
+			//moving arrow across menu
+			if (IsKeyDown(265)){
+				gamestates = MAIN_QUIT;
+			}
+			if (IsKeyDown(264)){
+				gamestates = MAIN_HIGHSCORES;
+			}
+			break;
 		
-		//player functions in game loop
-		player.MovementKeys(DeltaT);
-		PlayerAnimation();
+		case MAIN_HIGHSCORES:
+			MoveSprite(mainHighScores, screenWidth *.5f, screenHeight * .5f);
+			DrawSprite(mainHighScores);
 
-		//enemy functions in game loop
-		AddEnemies(DeltaT);
-		MoveEnemies(DeltaT);
-		CollisionCheck();
+			
+			//moving arrow across menu
+			if (IsKeyDown(265)){
+				gamestates = MAIN_START_GAME;
+			}
+			if (IsKeyDown(264)){
+				gamestates = MAIN_QUIT;
+			}
+			break;
+
+		case MAIN_QUIT:
+			MoveSprite(mainQuit, screenWidth *.5f, screenHeight * .5f);
+			DrawSprite(mainQuit);
+			if (IsKeyDown(257)){
+				endGame = true;
+			}
+			
+			//moving arrow across menu
+			if (IsKeyDown(265)){
+				gamestates = MAIN_HIGHSCORES;
+			}
+			if (IsKeyDown(264)){
+				gamestates = MAIN_START_GAME;
+			}
+			break;
+		case PRE_GAME_MENU:
+			DrawString("W,A,S,D are to move", 150, 600);
+			DrawString("SpaceBar is to shoot", 150, 550);
+			DrawString("Enter to Continue", 150, 500);
+
+			if (IsKeyDown(257)){
+				gamestates = GAMESTATE;
+			}
+			break;
+		case GAMESTATE:
+			//Game UI
+			GameUI();
+
+			//Bullet functions in loop
+			AddingBullet(DeltaT);
+			MoveBullets(DeltaT);
+			BulletCollideEnemy();
 
 
-    } while(!FrameworkUpdate());
+			//player functions in game loop
+			player.MovementKeys(DeltaT);
+			PlayerAnimation();
+
+			//enemy functions in game loop
+			AddEnemies(DeltaT);
+			MoveEnemies(DeltaT);
+			CollisionCheck();
+			break;
+		}
+    } while(!FrameworkUpdate() && !endGame);
 
     Shutdown();
     return 0;
@@ -187,7 +251,7 @@ void MoveEnemies(float a_deltaTime){
 void CollisionCheck(){
 	for (int i = 0; i < enemyPlane.size(); i++){
 		if (enemyPlane[i].Collide() == true){
-			DrawString("you dead...", 200, 200);
+			DrawString("you died...", 200, 200);
 		}
 	}
 }
