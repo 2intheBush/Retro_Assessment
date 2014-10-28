@@ -29,7 +29,6 @@ float spawnTime, currentSpawnTime;
 float myHighScore;
 bool endGame;
 
-
 enum PLAYERANIMATION{
 	ONE,
 	TWO,
@@ -38,9 +37,11 @@ enum PLAYERANIMATION{
 };
 
 enum GAMESTATES{
+	SPLASHSCREEN,
 	MAIN_START_GAME,
 	MAIN_HIGHSCORES,
 	MAIN_QUIT,
+	HIGHSCOREPAGE,
 	HOWTOPLAY,
 	HIGHSCORE,
 	QUIT,
@@ -103,11 +104,11 @@ int main( int argc, char* argv[] )
 	unsigned int mainStartGame = CreateSprite("./images/Menu_Start_Game.png", screenWidth, screenHeight, true);
 	unsigned int mainHighScores = CreateSprite("./images/Menu_High_Score.png", screenWidth, screenHeight, true);
 	unsigned int mainQuit = CreateSprite("./images/Menu_Quit.png", screenWidth, screenHeight, true);
-
+	unsigned int splashScreen = CreateSprite("./images/Splash Screen.png", screenWidth, screenHeight, true);
 
 	//player Animation
 	playerAnim = ONE;
-	gamestates = MAIN_START_GAME;
+	gamestates = SPLASHSCREEN;
 	endGame = false;
 
     //Game Loop
@@ -117,6 +118,13 @@ int main( int argc, char* argv[] )
 		float DeltaT = GetDeltaTime(); 
 		
 		switch (gamestates){
+		case SPLASHSCREEN:
+			MoveSprite(splashScreen, screenWidth *.5f, screenHeight * .5f);
+			DrawSprite(splashScreen);
+			if (IsKeyDown(32)){
+				gamestates = MAIN_START_GAME;
+			}
+			break;
 		case MAIN_START_GAME:
 			MoveSprite(mainStartGame, screenWidth *.5f, screenHeight * .5f);
 			DrawSprite(mainStartGame);
@@ -136,8 +144,9 @@ int main( int argc, char* argv[] )
 		case MAIN_HIGHSCORES:
 			MoveSprite(mainHighScores, screenWidth *.5f, screenHeight * .5f);
 			DrawSprite(mainHighScores);
-
-			
+			if (IsKeyDown(257)){
+				gamestates = HIGHSCOREPAGE;
+			}
 			//moving arrow across menu
 			if (IsKeyDown(265)){
 				gamestates = MAIN_START_GAME;
@@ -162,17 +171,31 @@ int main( int argc, char* argv[] )
 				gamestates = MAIN_START_GAME;
 			}
 			break;
+		case HIGHSCOREPAGE:
+			LoadHighScores();
+			DrawString("HIGHSCORE: ", screenWidth * .45f, 400);
+			char buff[30];
+			DrawString(itoa(myHighScore, buff, 10), screenWidth * .4f, 775);
+			if (IsKeyDown(81)){
+				gamestates = MAIN_START_GAME;
+			}
+			break;
 		case PRE_GAME_MENU:
 			DrawString("W,A,S,D are to move", 150, 600);
 			DrawString("SpaceBar is to shoot", 150, 550);
-			DrawString("Enter to Continue", 150, 500);
+			DrawString("SpaceBar to Continue", 150, 500);
 
-			if (IsKeyDown(257)){
+			if (IsKeyDown(32)){
 				gamestates = GAMESTATE;
 			}
 			break;
 		case GAMESTATE:
+			if (IsKeyDown(81)){
+				gamestates = MAIN_QUIT;
+			}
 			//Game UI
+			
+			
 			GameUI();
 
 			//Bullet functions in loop
@@ -251,7 +274,8 @@ void MoveEnemies(float a_deltaTime){
 void CollisionCheck(){
 	for (int i = 0; i < enemyPlane.size(); i++){
 		if (enemyPlane[i].Collide() == true){
-			DrawString("you died...", 200, 200);
+			gamestates = MAIN_START_GAME;
+			WriteHighScores();
 		}
 	}
 }
@@ -284,15 +308,18 @@ void LoadHighScores(){
 	Highscores.open("Highscores.txt", ios::in);
 	char buffer[10];
 	Highscores.getline(buffer, 10);
+ 
 	myHighScore = atoi(buffer);
 	Highscores.close();
 }
 
 void GameUI(){
 	char playerScore[10];
-	char buff[30];
 	player.GetScore(playerScore);
-
+	if (player.score >= myHighScore){
+		myHighScore = player.score;
+	}
+	char buff[30];
 	DrawString("HIGHSCORE:", screenWidth * .05f, 775);
 	DrawString(itoa(myHighScore, buff, 10), screenWidth * .4f, 775);
 	DrawString("YOUR SCORE:", screenWidth * .05f, 750);
