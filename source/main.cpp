@@ -3,6 +3,7 @@
 #include <fstream>
 #include <vector>
 #include "main.h"
+#include "Singleton.h"
 #include "Bullets.h"
 #include "Enemies.h"
 #include "Player.h"
@@ -20,10 +21,10 @@ void PlayerAnimation();
 void WriteHighScores();
 void LoadHighScores();
 void GameUI();
+void DestroyInstance();
 
 //GLobal Variables
-unsigned int screenHeight = 800;
-unsigned int screenWidth = 600;
+Singleton* globalManager = Singleton::GetInstance();
 float reloadTime, currentReloadTime;
 float spawnTime, currentSpawnTime;
 float myHighScore;
@@ -53,7 +54,7 @@ GAMESTATES gamestates;
 PLAYERANIMATION playerAnim;
 Player player;
 
-std::vector<Enemies> enemyPlane;
+std::vector<Enemies> enemyPlane;  
 
 std::vector<Bullets> bullet;
 
@@ -87,7 +88,8 @@ void PlayerAnimation(){
 
 int main( int argc, char* argv[] )
 {	
-    Initialise(screenWidth, screenHeight, false, "My Awesome Game");
+	
+	Initialise(globalManager->screenWidth, globalManager->screenHeight, false, "My Awesome Game");
 	
     SetBackgroundColour(SColour(0, 100, 200, 50));
 	
@@ -101,10 +103,10 @@ int main( int argc, char* argv[] )
 	currentSpawnTime = spawnTime;
 	
 	//Menu Sprites
-	unsigned int mainStartGame = CreateSprite("./images/Menu_Start_Game.png", screenWidth, screenHeight, true);
-	unsigned int mainHighScores = CreateSprite("./images/Menu_High_Score.png", screenWidth, screenHeight, true);
-	unsigned int mainQuit = CreateSprite("./images/Menu_Quit.png", screenWidth, screenHeight, true);
-	unsigned int splashScreen = CreateSprite("./images/Splash Screen.png", screenWidth, screenHeight, true);
+	unsigned int mainStartGame = CreateSprite("./images/Menu_Start_Game.png", globalManager->screenWidth, globalManager->screenHeight, true);
+	unsigned int mainHighScores = CreateSprite("./images/Menu_High_Score.png", globalManager->screenWidth, globalManager->screenHeight, true);
+	unsigned int mainQuit = CreateSprite("./images/Menu_Quit.png", globalManager->screenWidth, globalManager->screenHeight, true);
+	unsigned int splashScreen = CreateSprite("./images/Splash Screen.png", globalManager->screenWidth, globalManager->screenHeight, true);
 
 	//player Animation
 	playerAnim = ONE;
@@ -119,14 +121,14 @@ int main( int argc, char* argv[] )
 		
 		switch (gamestates){
 		case SPLASHSCREEN:
-			MoveSprite(splashScreen, screenWidth *.5f, screenHeight * .5f);
+			MoveSprite(splashScreen, globalManager->screenWidth *.5f, globalManager->screenHeight * .5f);
 			DrawSprite(splashScreen);
 			if (IsKeyDown(32)){
 				gamestates = MAIN_START_GAME;
 			}
 			break;
 		case MAIN_START_GAME:
-			MoveSprite(mainStartGame, screenWidth *.5f, screenHeight * .5f);
+			MoveSprite(mainStartGame, globalManager->screenWidth *.5f, globalManager->screenHeight * .5f);
 			DrawSprite(mainStartGame);
 			
 			if (IsKeyDown(257)){
@@ -142,7 +144,7 @@ int main( int argc, char* argv[] )
 			break;
 		
 		case MAIN_HIGHSCORES:
-			MoveSprite(mainHighScores, screenWidth *.5f, screenHeight * .5f);
+			MoveSprite(mainHighScores, globalManager->screenWidth *.5f, globalManager->screenHeight * .5f);
 			DrawSprite(mainHighScores);
 			if (IsKeyDown(257)){
 				gamestates = HIGHSCOREPAGE;
@@ -157,7 +159,7 @@ int main( int argc, char* argv[] )
 			break;
 
 		case MAIN_QUIT:
-			MoveSprite(mainQuit, screenWidth *.5f, screenHeight * .5f);
+			MoveSprite(mainQuit, globalManager->screenWidth *.5f, globalManager->screenHeight * .5f);
 			DrawSprite(mainQuit);
 			if (IsKeyDown(257)){
 				endGame = true;
@@ -173,9 +175,9 @@ int main( int argc, char* argv[] )
 			break;
 		case HIGHSCOREPAGE:
 			LoadHighScores();
-			DrawString("HIGHSCORE: ", screenWidth * .45f, 400);
+			DrawString("HIGHSCORE: ", globalManager->screenWidth * .45f, 400);
 			char buff[30];
-			DrawString(itoa(myHighScore, buff, 10), screenWidth * .4f, 775);
+			DrawString(itoa(myHighScore, buff, 10), globalManager->screenWidth * .4f, 350);
 			if (IsKeyDown(81)){
 				gamestates = MAIN_START_GAME;
 			}
@@ -203,7 +205,6 @@ int main( int argc, char* argv[] )
 			MoveBullets(DeltaT);
 			BulletCollideEnemy();
 
-
 			//player functions in game loop
 			player.MovementKeys(DeltaT);
 			PlayerAnimation();
@@ -215,7 +216,7 @@ int main( int argc, char* argv[] )
 			break;
 		}
     } while(!FrameworkUpdate() && !endGame);
-
+	DestroyInstance();
     Shutdown();
     return 0;
 }
@@ -320,9 +321,14 @@ void GameUI(){
 		myHighScore = player.score;
 	}
 	char buff[30];
-	DrawString("HIGHSCORE:", screenWidth * .05f, 775);
-	DrawString(itoa(myHighScore, buff, 10), screenWidth * .4f, 775);
-	DrawString("YOUR SCORE:", screenWidth * .05f, 750);
-	DrawString(playerScore, screenWidth * .4f, 750);
+	DrawString("HIGHSCORE:", globalManager->screenWidth * .05f, 775);
+	DrawString(itoa(myHighScore, buff, 10), globalManager->screenWidth * .4f, 775);
+	DrawString("YOUR SCORE:", globalManager->screenWidth * .05f, 750);
+	DrawString(playerScore, globalManager->screenWidth * .4f, 750);
 
+}
+
+void DestroyInstance()
+{
+	delete globalManager;
 }

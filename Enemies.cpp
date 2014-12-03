@@ -1,17 +1,17 @@
 #include "Enemies.h"
 #include "AIE.h"
-
-
+#include "Singleton.h"
 
 Enemies::Enemies()	{
 	dir = -1;
+	Singleton* globalManager = Singleton::GetInstance();
 	speed = 200.f;
 	width = 50;
 	height = 50;
 	leftExtreme = 0;
 	x = leftExtreme + height * .5f;
 	y = 800;
-	rightExtreme = 600;
+	rightExtreme = globalManager->screenWidth;
 	bottomExtreme = 0 + height * .5f;
 	topExtreme = 800;
 	spriteID = CreateSprite("./images/yellowplane.png", width, height, true);
